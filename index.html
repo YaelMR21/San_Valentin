@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feliz 14 de Febrero</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(to bottom,#ffffff,#ff7eb3);
+    overflow:hidden;
+    text-align:center;
+}
+
+/* TITULO */
+h1{
+    font-size:clamp(2rem,5vw,3rem);
+    animation:latido 1.2s infinite;
+}
+@keyframes latido{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.15);}
+}
+
+/* BOTONES */
+.botones{
+    position:relative;
+    width:90vw;
+    max-width:400px;
+    height:200px;
+}
+button{
+    padding:15px 30px;
+    font-size:18px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    position:absolute;
+    transition:.25s;
+}
+
+/* SI */
+#si{
+    left:30%;
+    top:80px;
+    background:#5c3a21;
+    color:white;
+}
+
+/* NO */
+#no{
+    left:55%;
+    top:80px;
+    background:rgba(255,255,255,0.7);
+    color:#333;
+    backdrop-filter:blur(3px);
+}
+
+/* PANTALLA FINAL */
+#mensaje{
+    display:none;
+    width:100%;
+    height:100vh;
+    position:fixed;
+    top:0;
+    left:0;
+    background:linear-gradient(to bottom,#ffffff,#ff7eb3);
+    z-index:10;
+}
+
+.contenido{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    width:100%;
+    height:100vh;
+}
+
+/* POEMA */
+.poema{
+    width:50%;
+    padding:60px;
+    font-family:"Great Vibes", cursive;
+    font-size:clamp(1rem,2vw,1.5rem);
+    color:#5c3a21;
+    text-align:center;
+}
+
+/* ARBOL */
+.san_valentin{
+    width:50%;
+    height:100%;
+    position:relative;
+    overflow:hidden;
+}
+
+/* CORAZONES */
+.corazon{
+    position:absolute;
+    color:#ff4d88;
+    animation:flotar linear infinite;
+    opacity:.8;
+}
+@keyframes flotar{
+    from{
+        transform:translateY(100vh) scale(.5);
+        opacity:1;
+    }
+    to{
+        transform:translateY(-10vh) scale(1.2);
+        opacity:0;
+    }
+}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+    .contenido{
+        flex-direction:column;
+    }
+    .poema,.san_valentin{
+        width:100%;
+        height:50%;
+    }
+}
+</style>
+</head>
+<body>
+
+<h1>💘 ¿Quieres ser mi San Valentín? 💘</h1>
+
+<div class="botones">
+<button id="si">Sí 💖</button>
+<button id="no">No 😢</button>
+</div>
+
+<!-- ESCENA FINAL -->
+<div id="mensaje">
+<div class="contenido">
+
+<div class="poema">
+<span id="textoPoema"></span>
+</div>
+
+<div class="san_valentin" id="arbol"></div>
+
+</div>
+</div>
+
+<script>
+const botonNo=document.getElementById("no");
+const botonSi=document.getElementById("si");
+const mensaje=document.getElementById("mensaje");
+
+const frases=[
+"¿Segura? 😳","Piensa bien 😭","No seas cruel 💔",
+"Dale Sí 😡","Te equivocas 😤","Última oportunidad 😏","No funciona 😜"
+];
+
+let escala=1;
+
+/* BOTON NO */
+function moverBoton(){
+    const ancho=window.innerWidth-120;
+    const alto=window.innerHeight-80;
+
+    botonNo.style.position="fixed";
+    botonNo.style.left=Math.random()*ancho+"px";
+    botonNo.style.top=Math.random()*alto+"px";
+
+    botonNo.textContent=frases[Math.floor(Math.random()*frases.length)];
+
+    escala+=0.15;
+    botonSi.style.transform="scale("+escala+")";
+}
+
+botonNo.addEventListener("mouseover", moverBoton);
+botonNo.addEventListener("click", moverBoton);
+
+/* BOTON SI */
+botonSi.addEventListener("click",()=>{
+    mensaje.style.display="block";
+    crearCorazones();
+    escribirPoema();
+});
+
+/* CORAZONES */
+function crearCorazones(){
+    const cont=document.getElementById("arbol");
+
+    for(let i=0;i<120;i++){
+        const cor=document.createElement("div");
+        cor.className="corazon";
+        cor.innerHTML="❤";
+        cor.style.left=Math.random()*100+"%";
+        cor.style.fontSize=(Math.random()*25+15)+"px";
+        cor.style.animationDuration=(Math.random()*5+3)+"s";
+        cont.appendChild(cor);
+    }
+}
+
+/* TEXTO POEMA */
+const poemaTexto=`Esa niña, la que está a lo lejos,
+la que se para de puntitas,
+para robarme un beso.
+
+No sé qué hizo,
+pero se volvió mi universo.
+
+Esa niña chaparrita,
+que solo miraba a lo lejos.
+
+Y ahora me ve,
+con esa mirada que dice:
+recuérdame cada que mires
+constelaciones en el cielo.
+
+Esa niña que tanto amo,
+la que procura siempre estar a mi lado,
+la que se volvió mi cielo nocturno.
+
+Esa niña, la que está a lo lejos,
+la que me enamoró en alguna calle del pueblo.`;
+
+/* EFECTO ESCRITURA */
+function escribirPoema(){
+    const cont=document.getElementById("textoPoema");
+    let i=0;
+
+    function escribir(){
+        if(i<poemaTexto.length){
+            cont.innerHTML+=poemaTexto[i]=="\n"?"<br>":poemaTexto[i];
+            i++;
+            setTimeout(escribir,40);
+        }
+    }
+    escribir();
+}
+</script>
+
+</body>
+</html>
